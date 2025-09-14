@@ -1,0 +1,292 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Attendo Design System - Futuristic Smart Attendance System 
+All colors MUST be HSL for proper theme support.
+*/
+
+@layer base {
+  :root {
+    /* Core Theme Colors */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    
+    /* Attendo Brand Colors */
+    --primary: 253 51% 53%;          /* Purple #6B46C1 */
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 253 71% 63%;     /* Lighter purple for glow */
+    
+    /* Blue Accent */
+    --accent: 217 91% 60%;           /* Blue accent */
+    --accent-foreground: 0 0% 98%;
+    --accent-glow: 217 91% 70%;
+    
+    /* Glassmorphism */
+    --glass-bg: 255 255 255 / 0.1;
+    --glass-border: 255 255 255 / 0.2;
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.1));
+    --gradient-text: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    
+    /* Shadows & Glows */
+    --glow-primary: 0 0 50px hsl(var(--primary) / 0.4);
+    --glow-accent: 0 0 50px hsl(var(--accent) / 0.4);
+    --shadow-glass: 0 8px 32px hsl(var(--foreground) / 0.1);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    /* Standard shadcn colors */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 253 51% 53%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark Theme */
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    
+    /* Attendo Brand Colors (adjusted for dark) */
+    --primary: 253 71% 63%;          /* Lighter purple for dark mode */
+    --primary-foreground: 0 0% 3.9%;
+    --primary-glow: 253 71% 73%;
+    
+    --accent: 217 91% 70%;           /* Lighter blue for dark mode */
+    --accent-foreground: 0 0% 3.9%;
+    --accent-glow: 217 91% 80%;
+    
+    /* Dark Glassmorphism */
+    --glass-bg: 255 255 255 / 0.05;
+    --glass-border: 255 255 255 / 0.1;
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    
+    /* Dark mode standard colors */
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 253 71% 63%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    scroll-behavior: smooth;
+    /* Optimize for animations */
+    will-change: scroll-position;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Optimize animations */
+  * {
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  /* Glassmorphism Effects */
+  .glass {
+    background: rgba(var(--glass-bg));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(var(--glass-border));
+    box-shadow: var(--glass-shadow);
+    /* Optimize for performance */
+    will-change: transform;
+    transform: translateZ(0);
+  }
+  
+  /* Gradient Text */
+  .gradient-text {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Glow Effects */
+  .glow-primary {
+    box-shadow: var(--glow-primary);
+  }
+  
+  .glow-accent {
+    box-shadow: var(--glow-accent);
+  }
+  
+  /* Hover Glow Animation - Optimized */
+  .hover-glow {
+    transition: var(--transition-smooth);
+    will-change: transform, box-shadow;
+  }
+  
+  .hover-glow:hover {
+    transform: translateY(-2px) translateZ(0);
+    box-shadow: var(--glow-primary);
+  }
+  
+  /* Animated Background - Optimized */
+  .animated-bg {
+    background: var(--gradient-hero);
+    background-size: 400% 400%;
+    animation: gradient-flow 20s ease infinite;
+    will-change: background-position;
+  }
+  
+  /* Cursor Glow Effect - Optimized */
+  .cursor-glow {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .cursor-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                                hsl(var(--primary) / 0.15), transparent 40%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    will-change: opacity;
+  }
+  
+  .cursor-glow:hover::before {
+    opacity: 1;
+  }
+}
+
+@layer utilities {
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+  
+  .transition-bounce {
+    transition: var(--transition-bounce);
+  }
+
+  /* Performance optimizations */
+  .will-change-transform {
+    will-change: transform;
+  }
+
+  .will-change-opacity {
+    will-change: opacity;
+  }
+
+  .gpu-accelerated {
+    transform: translateZ(0);
+  }
+}
+
+/* Optimized Keyframe Animations */
+@keyframes gradient-flow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) translateZ(0);
+  }
+  50% {
+    transform: translateY(-10px) translateZ(0);
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px hsl(var(--primary) / 0.8);
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
