@@ -6,7 +6,6 @@ export interface User {
   role: 'admin' | 'student';
   name: string;
   createdAt: string;
-  fingerprintId?: string;
 }
 
 interface AuthContextType {
@@ -16,8 +15,7 @@ interface AuthContextType {
     email: string,
     password: string,
     name: string,
-    role: 'admin' | 'student',
-    extra?: { fingerprintId?: string }
+    role: 'admin' | 'student'
   ) => Promise<{ user: User } | { error: string }>;
   logout: () => void;
   loading: boolean;
@@ -70,8 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     email: string,
     password: string,
     name: string,
-    role: 'admin' | 'student',
-    extra?: { fingerprintId?: string }
+    role: 'admin' | 'student'
   ) => {
     try {
       // Check if user already exists
@@ -88,8 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email,
         name,
         role,
-        createdAt: new Date().toISOString(),
-        fingerprintId: extra?.fingerprintId
+        createdAt: new Date().toISOString()
       };
       
       // Store user data

@@ -19,19 +19,16 @@ interface FormData {
   password: string;
   role: "admin" | "student" | "";
   adminPasskey?: string;
-  fingerprintId?: string;
 }
 
 export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [isScanning, setIsScanning] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
     password: "",
     role: "",
-    adminPasskey: "",
-    fingerprintId: ""
+    adminPasskey: ""
   });
   const { toast } = useToast();
   const { login, register } = useAuth();
@@ -64,18 +61,11 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
         }
       }
 
-      if (formData.role === "student" && !formData.fingerprintId) {
-        toast({ title: "Fingerprint Required", description: "Please provide your fingerprint ID.", variant: "destructive" });
-        return;
-      }
       const result = await register(
         formData.email,
         formData.password,
         formData.name,
-        formData.role as "admin" | "student",
-        {
-          fingerprintId: formData.role === "student" ? formData.fingerprintId : undefined
-        }
+        formData.role as "admin" | "student"
       );
 
       if ("error" in result) {
@@ -108,71 +98,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
   };
 
   const resetForm = () => {
-    setFormData({ name: "", email: "", password: "", role: "", adminPasskey: "", fingerprintId: "" });
-  };
-
-  const handleScanFingerprint = async () => {
-    try {
-      setIsScanning(true);
-      const apiBase = import.meta.env.VITE_API_BASE;
-      if (!apiBase || !/^https:\/\//.test(apiBase)) {
-        toast({ title: 'Backend URL not set', description: 'Set VITE_API_BASE to an HTTPS backend.', variant: 'destructive' });
-        return;
-      }
-      if (!formData.email) {
-        toast({ title: 'Enter email first', description: 'Email is required before scanning.', variant: 'destructive' });
-        return;
-      }
-      if (!('PublicKeyCredential' in window)) {
-        toast({ title: 'Biometrics not supported', description: 'Your browser/device does not support WebAuthn.', variant: 'destructive' });
-        await new Promise((r) => setTimeout(r, 1200));
-        const generatedId = `FP-${crypto.randomUUID().slice(0, 8)}`;
-        setFormData((prev) => ({ ...prev, fingerprintId: generatedId }));
-        return;
-      }
-      const uvpa = await (window as any).PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable?.();
-      if (!uvpa) {
-        toast({ title: 'Platform authenticator unavailable', description: 'Enable screen lock and enroll biometrics.', variant: 'destructive' });
-        return;
-      }
-      try {
-        const resp = await fetch(`${apiBase}/api/webauthn/register/options`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: formData.email, name: formData.name || 'Student' })
-        });
-        if (!resp.ok) throw new Error(`options ${resp.status}`);
-        const { publicKey } = await resp.json();
-        const toBuffer = (b64url: string) => Uint8Array.from(atob(b64url.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0)).buffer;
-        publicKey.challenge = toBuffer(publicKey.challenge);
-        publicKey.user.id = toBuffer(publicKey.user.id);
-
-        const credential: any = await navigator.credentials.create({ publicKey });
-        if (!credential) throw new Error('no_credential');
-        const attObj = (credential.response as any).attestationObject;
-        const clientData = (credential.response as any).clientDataJSON;
-        const rawId = credential.rawId;
-        const toBase64Url = (buf: ArrayBuffer) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
-        const verifyResp = await fetch(`${apiBase}/api/webauthn/register/verify`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: formData.email,
-            clientDataJSON: toBase64Url(clientData),
-            attestationObject: toBase64Url(attObj),
-            rawId: toBase64Url(rawId)
-          })
-        });
-        const verifyJson = await verifyResp.json();
-        if (!verifyResp.ok || !verifyJson.verified) throw new Error('verify_failed');
-        setFormData(prev => ({ ...prev, fingerprintId: verifyJson.credentialId }));
-        toast({ title: 'Biometric registered', description: 'Device credential captured' });
-      } catch (err: any) {
-        toast({ title: 'Scan failed', description: String(err?.message || err), variant: 'destructive' });
-      }
-    } finally {
-      setIsScanning(false);
-    }
+    setFormData({ name: "", email: "", password: "", role: "", adminPasskey: "" });
   };
 
   const toggleMode = () => {
@@ -301,24 +227,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
                 </div>
               )}
 
-              {isSignUp && formData.role === "student" && (
-                <div className="space-y-2">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                    <Button type="button" onClick={handleScanFingerprint} disabled={isScanning} className="hover-glow">
-                      {isScanning ? "Scanning..." : "Scan fingerprint"}
-                    </Button>
-                    <Input
-                      type="text"
-                      name="fingerprintId"
-                      placeholder="No fingerprint captured"
-                      value={formData.fingerprintId}
-                      readOnly
-                      className="glass border-primary/20 focus:border-primary/50"
-                    />
-                  </div>
-                  <p className="text-xs text-muted-foreground">This triggers a future scanner/SDK. Stored as a reference ID only.</p>
-                </div>
-              )}
+              {/* Fingerprint step removed for students */}
 
               <Button
                 type="submit"
